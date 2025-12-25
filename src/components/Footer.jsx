@@ -158,33 +158,52 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Contact Us</h3>
             <div className="space-y-3 text-sm">
-              <div className="flex items-start">
-                <MapPin className="h-4 w-4 text-orange-400 mr-2 mt-1 flex-shrink-0" />
-                <span>
-                  Dhapakhel,lalitpur
-                  <br/>
-                  Chapagaun Dobato,lalitpur
-                  <br />
-                  
-                
-                  Nepal
-                </span>
-              </div>
+             <div className="flex items-start">
+  <MapPin className="h-4 w-4 text-orange-400 mr-2 mt-1 flex-shrink-0" />
+  <a
+    href="https://maps.app.goo.gl/kSX6nS5tJpBzz6vGA"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-orange-400 transition-colors"
+  >
+    Dhapakhel, Lalitpur
+    <br />
+    Chapagaun Dobato, Lalitpur
+    <br />
+    Nepal
+  </a>
+</div>
 
-              <div className="flex items-center">
-                <Phone className="h-4 w-4 text-orange-400 mr-2" />
-                <span>01515825</span>
-              </div>
+          <div className="flex items-center">
+  <Phone className="h-4 w-4 text-orange-400 mr-2" />
+  <a
+    href="tel:01515825"
+    className="hover:text-orange-400 transition-colors"
+  >
+    01-515825
+  </a>
+</div>
 
-              <div className="flex items-center">
-                <Phone className="h-4 w-4 text-orange-400 mr-2" />
-                <span>9851079391(Mobile)</span>
-              </div>
+<div className="flex items-center">
+  <Phone className="h-4 w-4 text-orange-400 mr-2" />
+  <a
+    href="tel:+9779851079391"
+    className="hover:text-orange-400 transition-colors"
+  >
+    9851079391 (Mobile)
+  </a>
+</div>
 
-              <div className="flex items-center">
-                <Mail className="h-4 w-4 text-orange-400 mr-2" />
-                <span>Jagdambaghpl@gmail.com</span>
-              </div>
+<div className="flex items-center">
+  <Mail className="h-4 w-4 text-orange-400 mr-2" />
+  <a
+    href="mailto:Jagdambaghpl@gmail.com"
+    className="hover:text-orange-400 transition-colors"
+  >
+    Jagdambaghpl@gmail.com
+  </a>
+</div>
+
 
               <div className="flex items-start">
                 <Clock className="h-4 w-4 text-orange-400 mr-2 mt-1" />
@@ -199,27 +218,19 @@ const Footer = () => {
 
         {/* Delivery Areas */}
         <div className="border-t border-gray-700 mt-8 pt-8">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Delivery Areas
-          </h3>
+        
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+           
             <div>
-              <h4 className="font-medium text-white mb-2">Kathmandu Valley</h4>
-              <ul className="space-y-1 text-gray-400">
-                <li>Kathmandu</li>
-                <li>Lalitpur (Patan)</li>
-                <li>Bhaktapur</li>
-                <li>Madhyapur Thimi</li>
+                            <h4 className="font-medium text-white mb-2">Services</h4>
+
+               <ul className="space-y-1 text-gray-400">
+                <li>Free Delivery (Rs. 5000+)</li>
+                <li>Technical Support</li>
+                <li>Bulk Discounts</li>
+                <li>Installation Guide</li>
               </ul>
-            </div>
-            <div>
-              <h4 className="font-medium text-white mb-2">Major Cities</h4>
-              <ul className="space-y-1 text-gray-400">
-                <li>Pokhara</li>
-                <li>Chitwan</li>
-                <li>Butwal</li>
-                <li>Biratnagar</li>
-              </ul>
+              
             </div>
             <div>
               <h4 className="font-medium text-white mb-2">Payment Methods</h4>
@@ -230,23 +241,15 @@ const Footer = () => {
                 <li>Bank Transfer</li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-medium text-white mb-2">Services</h4>
-              <ul className="space-y-1 text-gray-400">
-                <li>Free Delivery (Rs. 5000+)</li>
-                <li>Technical Support</li>
-                <li>Bulk Discounts</li>
-                <li>Installation Guide</li>
-              </ul>
-            </div>
+           
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
           <p className="text-gray-400">
-            © 2024 Nepal Hardware Store. All rights reserved. | Made with ❤️ in
-            Nepal
+            © 2024 Jagadamba Hardware Store. All rights reserved. | Made with ❤️ by Amplify Digital
+            
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a

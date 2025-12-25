@@ -507,11 +507,11 @@ const Checkout = () => {
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="flex items-center text-sm text-gray-600 mb-2">
                   <Phone className="h-4 w-4 mr-2" />
-                  <span>Need help? Call 01-4567890</span>
+                  <span>Need help? Call 01-515825</span>
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />
-                  <span>Free delivery in Kathmandu Valley</span>
+                  <span>Delivery all over Kathmandu Valley</span>
                 </div>
               </div>
             </div>
