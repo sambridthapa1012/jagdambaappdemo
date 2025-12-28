@@ -247,10 +247,10 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-          <p className="text-gray-400">
+          <a href="https://www.amplify.com.np/" className="text-gray-400">
             © 2024 Jagadamba Hardware Store. All rights reserved. | Made with ❤️ by Amplify Digital
             
-          </p>
+          </a>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a
               href="#"

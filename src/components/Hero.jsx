@@ -1,23 +1,48 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Truck, Shield, Headphones, Award } from "lucide-react";
+import BulkOrder from "./BulkOrder";
 
 const Hero = () => {
   const navigate = useNavigate();
 
   const handleViewProducts = () => navigate("/products");
+  const slides = [
+  "https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "https://images.pexels.com/photos/2590716/pexels-photo-2590716.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=1200",
+];
+
+const [currentSlide, setCurrentSlide] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, 4000);
+
+  return () => clearInterval(interval);
+}, []);
+
 
   return (
     <section className="relative">
       {/* Main Hero Banner */}
       <div className="relative h-96 md:h-[500px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600")',
-          }}
-        />
+      {slides.map((image, index) => (
+  <div
+    key={index}
+    className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
+      index === currentSlide ? "opacity-100" : "opacity-0"
+    }`}
+    style={{
+      backgroundImage: `linear-gradient(
+        rgba(0, 0, 0, 0.4),
+        rgba(0, 0, 0, 0.4)
+      ), url(${image})`,
+    }}
+  />
+))}
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 h-full flex items-center">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
@@ -38,7 +63,7 @@ const Hero = () => {
                 Shop Now
                 <ChevronRight className="ml-2 h-5 w-5" />
               </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-gray-800 transition duration-300 font-semibold">
+              <button onClick={() => navigate("/bulk")} className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-gray-800 transition duration-300 font-semibold" >
                 Request Bulk Quote
               </button>
             </div>

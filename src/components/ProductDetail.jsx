@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -14,10 +14,19 @@ import {
 import { featuredProducts } from "../data/products";
 import { useCart } from "../context/CartContext";
 
+
+
 const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+  useEffect(() => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}, []);
+
   const { dispatch } = useCart();
   const { id } = useParams();
   const navigate = useNavigate();

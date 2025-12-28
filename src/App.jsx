@@ -17,6 +17,7 @@ import Login from "./components/Loginp";
 import Signup from "./components/Signup";
 
 import { useState } from "react";
+import Bestselling from "./components/BestSelling"; 
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
               element={
                 <>
                   <Hero />
+                  <Bestselling />
                   <FeaturedCategories />
                   <FeaturedProducts />
                 </>
