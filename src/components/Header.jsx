@@ -16,6 +16,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { smartSearch } from "../utils/SearchProduct";
 import { featuredProducts } from "../data/products";
+import { useAuth } from "../context/AuthContext";
+
 
 const Header = ({ onCartClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,27 +44,15 @@ const Header = ({ onCartClick }) => {
 
   const isActive = (path) =>
     location.pathname === path ? "text-orange-600" : "";
-  const user = false;
-  const accessToken = localStorage.getItem("accessToken");
+ const { user, isAuthenticated, logout } = useAuth();
 
-  const LogoutHandler = async () => {
-    try {
-      const res = await axios.post(
-        `http://localhost:8000/api/v1/user/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (res.data.sucess) {
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
+ const handleLogout = () => {
+  logout();
+  toast.success("Logged out successfully");
+  navigate("/login");
+};
+
 
   return (
     <header className="bg-white shadow-md relative z-50">
@@ -83,23 +73,31 @@ const Header = ({ onCartClick }) => {
             </div>
           </div>
           {/* <p>Hello, {user?.firstName} {user?.lastName}</p> */}
+          {isAuthenticated && (
+  <span className="ml-70" p>
+    Hello, {user.firstName}
+  </span>
+)}
 
-          {user ? (
-            <button
-              className="hover:text-orange-200"
-              onClick={() => alert(" logout successfully")}
-            >
-              <User className="h-4 w-4 inline mr-1" /> Logout
-            </button>
-          ) : (
-            <button
-              className="hover:text-orange-200"
-              onClick={() => navigate("/login")}
-            >
-              <User className="h-4 w-4 inline mr-1" />
-              Login
-            </button>
-          )}
+
+     {isAuthenticated ? (
+  <button
+    className="hover:text-orange-200 flex items-center gap-1"
+    onClick={handleLogout}
+  >
+    <User className="h-4 w-4" />
+    Logout
+  </button>
+) : (
+  <button
+    className="hover:text-orange-200 flex items-center gap-1"
+    onClick={() => navigate("/login")}
+  >
+    <User className="h-4 w-4" />
+    Login
+  </button>
+)}
+
         </div>
       </div>
 

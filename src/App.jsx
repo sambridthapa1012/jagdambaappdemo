@@ -18,6 +18,7 @@ import Signup from "./components/Signup";
 
 import { useState } from "react";
 import Bestselling from "./components/BestSelling"; 
+import ProtectedRoute from "./routes/ProtectedRoutes";
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -34,13 +35,14 @@ function App() {
             <Route
               path="/"
               element={
-                <>
+                
+                <ProtectedRoute>
                   <Hero />
                   <Bestselling />
                   <FeaturedCategories />
                   <FeaturedProducts />
-                </>
-              }
+                </ProtectedRoute>
+              }   
             />
 
             {/* PRODUCTS */}
