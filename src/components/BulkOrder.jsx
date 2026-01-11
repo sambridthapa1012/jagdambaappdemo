@@ -9,9 +9,10 @@ import {
   Phone,
   Users,
 } from "lucide-react";
-import { featuredProducts } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 
 const BulkOrder = () => {
+   const { products, loading } = useProducts();
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [customerInfo, setCustomerInfo] = useState({
     customerName: "",

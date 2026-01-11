@@ -15,8 +15,9 @@ import logo_j from "../assets/jagadambap_logo.jpg";
 import axios from "axios";
 import { toast } from "sonner";
 import { smartSearch } from "../utils/SearchProduct";
-import { featuredProducts } from "../data/products";
 import { useAuth } from "../context/AuthContext";
+import { useProducts } from "../context/ProductContext";
+
 
 
 const Header = ({ onCartClick }) => {
@@ -28,6 +29,7 @@ const Header = ({ onCartClick }) => {
   const { state } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+   const { products, loading } = useProducts();
   const handleSearch = (value) => {
   setSearch(value);
 
@@ -36,7 +38,7 @@ const Header = ({ onCartClick }) => {
     return;
   }
 
-  const results = smartSearch(featuredProducts, value).slice(0, 6);
+  const results = smartSearch(products, value).slice(0, 6);
   setSuggestions(results);
 };
 
@@ -74,9 +76,13 @@ const Header = ({ onCartClick }) => {
           </div>
           {/* <p>Hello, {user?.firstName} {user?.lastName}</p> */}
           {isAuthenticated && (
-  <span className="ml-70" p>
-    Hello, {user.firstName}
-  </span>
+   <button
+    className="hover:text-orange-200 flex items-center gap-1"
+    onClick={() => navigate("/profile")}
+  >
+   <div>Hello, {user?.firstName}</div>
+   
+  </button>
 )}
 
 

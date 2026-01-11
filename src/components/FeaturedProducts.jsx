@@ -1,17 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, ShoppingCart, Eye, Award } from "lucide-react";
-import { featuredProducts } from "../data/products";
 import { useCart } from "../context/CartContext";
+import { useProducts } from "../context/ProductContext";
 
 const FeaturedProducts = () => {
   const { dispatch } = useCart();
   const navigate = useNavigate();
+  const { products, loading } = useProducts();
+  const {addItem}=useCart();
 
-  const handleAddToCart = (e, product) => {
-    e.stopPropagation();
-    dispatch({ type: "ADD_ITEM", payload: product });
-  };
+  // const handleAddToCart = (e, product) => {
+  //   e.stopPropagation();
+  //   dispatch({ type: "ADD_ITEM", payload: product });
+  // };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-NP", {
@@ -35,11 +37,11 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProducts.slice(0, 9).map((product) => (
+          {products.slice(0, 9).map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer"
-              onClick={() => navigate(`/products/${product.id}`)}
+              onClick={() => navigate(`/products/${product._id}`)}
             >
               <div className="relative">
                 <img
@@ -65,7 +67,7 @@ const FeaturedProducts = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/products/${product.id}`);
+                      navigate(`/products/${product._id}`);
                     }}
                     className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50"
                   >
@@ -118,7 +120,7 @@ const FeaturedProducts = () => {
                 </div>
 
                 <button
-                  onClick={(e) => handleAddToCart(e, product)}
+                  onClick={() => addItem(product._id)}
                   className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-300 flex items-center justify-center font-medium"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />

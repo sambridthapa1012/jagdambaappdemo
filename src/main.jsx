@@ -7,6 +7,7 @@ import "./index.css";
 import { Toaster } from "sonner";
 import store from "./redux/store";
 import { AuthProvider } from "./context/AuthContext";
+import { ProductProvider } from "./context/ProductContext";
 
 
 createRoot(document.getElementById("root")).render(
@@ -14,9 +15,11 @@ createRoot(document.getElementById("root")).render(
    <Provider store={store}>
       <BrowserRouter>
       <AuthProvider>
-        <App />
+        <ProductProvider>
+           <App />
         <Toaster />
-      </AuthProvider>
+        </ProductProvider>
+        </AuthProvider>
       </BrowserRouter>
    </Provider>
   </StrictMode>

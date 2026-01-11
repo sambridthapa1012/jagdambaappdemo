@@ -3,7 +3,7 @@ import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 const Cart = ({ isOpen, onClose, onCheckout }) => {
-  const { state, dispatch } = useCart();
+  const { state, updateQuantity, removeItem } = useCart();
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-NP", {
@@ -14,20 +14,12 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
     }).format(price);
   };
 
-  const updateQuantity = (id, quantity) => {
-    dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } });
-  };
-
-  const removeItem = (id) => {
-    dispatch({ type: "REMOVE_ITEM", payload: id });
-  };
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -74,7 +66,6 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                       <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
                         {item.name}
                       </h3>
-                      <p className="text-sm text-gray-600">{item.brand}</p>
                       <p className="text-sm font-semibold text-orange-600">
                         {formatPrice(item.price)}
                       </p>
@@ -97,9 +88,11 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                         >
                           <Minus className="h-4 w-4" />
                         </button>
+
                         <span className="mx-2 text-sm font-medium">
                           {item.quantity}
                         </span>
+
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
@@ -128,30 +121,15 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                 </span>
               </div>
 
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    onCheckout();
-                    onClose();
-                  }}
-                  className="w-full bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition duration-300 font-semibold"
-                >
-                  Proceed to Checkout
-                </button>
-
-                <button
-                  onClick={onClose}
-                  className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300"
-                >
-                  Continue Shopping
-                </button>
-              </div>
-
-              <div className="mt-4 text-center">
-                <p className="text-xs text-gray-500">
-                  Free delivery on orders above Rs. 5,000 in Kathmandu Valley
-                </p>
-              </div>
+              <button
+                onClick={() => {
+                  onCheckout();
+                  onClose();
+                }}
+                className="w-full bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 font-semibold"
+              >
+                Proceed to Checkout
+              </button>
             </div>
           )}
         </div>
@@ -161,4 +139,3 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
 };
 
 export default Cart;
-

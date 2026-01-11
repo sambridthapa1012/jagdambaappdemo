@@ -11,7 +11,7 @@ import {
   Shield,
   Phone,
 } from "lucide-react";
-import { featuredProducts } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 import { useCart } from "../context/CartContext";
 
 
@@ -20,6 +20,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+   const { products, loading } = useProducts();
   useEffect(() => {
   window.scrollTo({
     top: 0,
@@ -27,11 +28,20 @@ const ProductDetail = () => {
   });
 }, []);
 
-  const { dispatch } = useCart();
+ 
   const { id } = useParams();
+  const { addItem } = useCart();
   const navigate = useNavigate();
+  if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-lg font-semibold">Loading product...</p>
+    </div>
+  );
+}
 
-  const product = featuredProducts.find((p) => p.id === id);
+  const product = products.find((p) => p._id === id);
+
 
   if (!product) {
     return (
@@ -51,11 +61,11 @@ const ProductDetail = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: product });
-    }
-  };
+  // const handleAddToCart = () => {
+  //   for (let i = 0; i < quantity; i++) {
+  //     dispatch({ type: "ADD_ITEM", payload: product });
+  //   }
+  // };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-NP", {
@@ -222,7 +232,7 @@ const ProductDetail = () => {
             {/* Add to Cart */}
             <div className="mb-6">
               <button
-                onClick={handleAddToCart}
+                onClick={() => addItem(product._id)}
                 className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition duration-300 flex items-center justify-center font-semibold text-lg mb-4"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
