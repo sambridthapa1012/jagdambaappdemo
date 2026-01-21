@@ -97,15 +97,15 @@ const ProductDetail = () => {
           <div>
             <div className="mb-4">
               <img
-                src={product.images[selectedImage] || product.image}
+                src={product.images?.[selectedImage]?.url || product.image?.url}
                 alt={product.name}
                 className="w-full h-96 object-cover rounded-lg shadow-md"
               />
             </div>
 
-            {product.images.length > 1 && (
+            {product.images?.length > 1 && (
               <div className="flex space-x-2 overflow-x-auto">
-                {product.images.map((image, index) => (
+                {product.images?.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -116,7 +116,7 @@ const ProductDetail = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={image?.url}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -239,7 +239,9 @@ const ProductDetail = () => {
                 Add to Cart - {formatPrice(product.price * quantity)}
               </button>
 
-              <button className="w-full bg-gray-800 text-white py-3 px-6 rounded-lg hover:bg-gray-900 transition duration-300 font-semibold">
+              <button onClick={()=>{addItem(product._id)
+                navigate('/checkout')
+              }} className="w-full bg-gray-800 text-white py-3 px-6 rounded-lg hover:bg-gray-900 transition duration-300 font-semibold">
                 Buy Now
               </button>
             </div>

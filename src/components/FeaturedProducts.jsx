@@ -36,8 +36,8 @@ const FeaturedProducts = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.slice(0, 9).map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.slice(0, 8).map((product) => (
             <div
               key={product._id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer"
@@ -45,7 +45,7 @@ const FeaturedProducts = () => {
             >
               <div className="relative">
                 <img
-                  src={product.image}
+                  src={product.images?.[0]?.url}
                   alt={product.name}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -120,8 +120,13 @@ const FeaturedProducts = () => {
                 </div>
 
                 <button
-                  onClick={() => addItem(product._id)}
-                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-300 flex items-center justify-center font-medium"
+                  onClick={
+                    (e) => { 
+                      e.stopPropagation();
+                      addItem(product._id);
+                    }
+                  }
+                  className="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition duration-300 flex items-center justify-center font-medium"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart

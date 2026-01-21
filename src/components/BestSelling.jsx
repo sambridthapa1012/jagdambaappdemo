@@ -234,7 +234,7 @@ function Bestselling() {
                 className="min-w-[300px] bg-white rounded-lg shadow hover:shadow-xl"
               >
                 <img
-                  src={product.images?.[0]}
+                  src={product.images?.[0]?.url}
                   alt={product.name}
                   className="h-48 w-full object-cover rounded-t-lg"
                 />

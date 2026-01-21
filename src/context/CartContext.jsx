@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as cartApi from "../api/cartApi";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(undefined);
 
 export const CartProvider = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
   const [state, setState] = useState({
     items: [],
     total: 0,
@@ -11,14 +14,23 @@ export const CartProvider = ({ children }) => {
     loading: true,
   });
 
-  // Load cart from backend on app start
+  const resetCart = () => {
+    setState({
+      items: [],
+      total: 0,
+      itemCount: 0,
+      loading: false,
+    });
+  };
+
   const loadCart = async () => {
     try {
       const cart = await cartApi.getCart();
+
       setState({
         items: cart.items.map(item => ({
-          id: item._id,                // cart item id
-          productId: item.product._id, // product id
+          id: item._id,
+          productId: item.product._id,
           name: item.product.name,
           price: item.price,
           image: item.product.images?.[0],
@@ -30,17 +42,22 @@ export const CartProvider = ({ children }) => {
       });
     } catch (err) {
       console.error(err);
-      setState(prev => ({ ...prev, loading: false }));
+      resetCart();
     }
   };
 
+  /* 🔑 RELOAD CART ON LOGIN / CLEAR ON LOGOUT */
   useEffect(() => {
-    loadCart();
-  }, []);
+    if (isAuthenticated) {
+      loadCart();
+    } else {
+      resetCart();
+    }
+  }, [isAuthenticated]);
 
-  // API-powered actions
+  // API actions
   const addItem = async (productId) => {
-    const cart = await cartApi.addToCart(productId, 1);
+    await cartApi.addToCart(productId, 1);
     loadCart();
   };
 
@@ -55,10 +72,22 @@ export const CartProvider = ({ children }) => {
     loadCart();
   };
 
-  const clear = async () => {
-    await cartApi.clearCart();
-    loadCart();
-  };
+// ❌ removes DB data (use only on checkout)
+const clearServerCart = async () => {
+  await cartApi.clearCart();
+  loadCart();
+};
+
+// ✅ frontend-only reset (use on logout)
+const clearLocalCart = () => {
+  setState({
+    items: [],
+    total: 0,
+    itemCount: 0,
+    loading: false,
+  });
+};
+
 
   return (
     <CartContext.Provider
@@ -67,7 +96,8 @@ export const CartProvider = ({ children }) => {
         addItem,
         updateQuantity,
         removeItem,
-        clear,
+        clearServerCart,
+        clearLocalCart
       }}
     >
       {children}

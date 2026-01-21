@@ -70,6 +70,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         loading,
+        token: localStorage.getItem("token"),
         isAuthenticated: !!user,
         register,
         login,

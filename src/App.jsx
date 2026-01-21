@@ -1,5 +1,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -15,10 +17,17 @@ import Footer from "./components/Footer";
 import Login from "./components/Loginp";
 // @ts-expect-error no type defs for jsx files
 import Signup from "./components/Signup";
+import OTPPage from "./components/OTPPage";
 
 import { useState } from "react";
 import Bestselling from "./components/BestSelling"; 
 import ProtectedRoute from "./routes/ProtectedRoutes";
+import WhatsAppButton from "./components/WhatsAppButton";
+import ChatbotWidget from "./components/ChatbotWidget";
+import PasswordResetSuccess from "./components/PasswordResetSuccess";
+import BestDealsProduct from "./components/BestDealsProduct";
+import MyOrdersPage from "./components/MyOrdersPage";
+import MyProfilePage from "./components/MyProfilePage";
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -36,13 +45,14 @@ function App() {
               path="/"
               element={
                 
-                <ProtectedRoute>
+                <>
                   <Hero />
                   <Bestselling />
                   <FeaturedCategories />
+                  <BestDealsProduct />
                   <FeaturedProducts />
-                </ProtectedRoute>
-              }   
+                </>
+              }
             />
 
             {/* PRODUCTS */}
@@ -54,12 +64,19 @@ function App() {
             {/* AUTH */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/otp-page" element={<OTPPage />} />
+            <Route path="/password-reset-success" element={<PasswordResetSuccess />} />
 
             {/* CHECKOUT */}
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
 
             {/* BULK ORDER */}
-            <Route path="/bulk" element={<BulkOrder />} />
+            <Route path="/bulk" element={<ProtectedRoute><BulkOrder /></ProtectedRoute>} />
+            {/* USER DASHBOARD */}
+            <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
+            <Route path="/my-profile" element={<ProtectedRoute><MyProfilePage /></ProtectedRoute>} />
           </Routes>
         </main>
 
@@ -73,8 +90,12 @@ function App() {
             setIsCartOpen(false);
           }}
         />
+
+        <ChatbotWidget />
+        <WhatsAppButton />
       </div>
     </CartProvider>
+    
   );
 }
 

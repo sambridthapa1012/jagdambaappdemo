@@ -71,7 +71,7 @@ const ProductList = () => {
   // };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className=" bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between mb-6">
@@ -206,7 +206,7 @@ const ProductList = () => {
                     className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer"
                   >
                     <img
-                      src={p.image}
+                      src={p.images?.[0]?.url}
                       alt={p.name}
                       className="h-48 w-full object-cover"
                     />
@@ -227,7 +227,7 @@ const ProductList = () => {
                       </div>
                       <p className="font-bold">{formatPrice(p.price)}</p>
                       <button
-                        onClick={() => addItem(product._id)}
+                        onClick={() => addItem(p._id)}
                         className="mt-3 w-full bg-orange-600 text-white py-2 rounded-lg flex justify-center"
                       >
                         <ShoppingCart size={16} className="mr-2" />

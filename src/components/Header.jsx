@@ -20,18 +20,32 @@ import { useProducts } from "../context/ProductContext";
 
 
 
+
+
+
 const Header = ({ onCartClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [search,setSearch]=useState("");
   const [suggestions,setSuggestions]=useState([]);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  
+
+
 
   const { state } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+    const authPages = ["/login", "/signup", "/forgot-password", "/reset-password/:token","/otp-page","/password-reset-success","/my-orders","/my-profile"];
+  const isAuthPage = authPages.includes(location.pathname);
    const { products, loading } = useProducts();
+   const { clearLocalCart } = useCart();
   const handleSearch = (value) => {
   setSearch(value);
+  if (location.pathname === "/login") {
+  return null;
+}
 
   if (!value) {
     setSuggestions([]);
@@ -44,12 +58,14 @@ const Header = ({ onCartClick }) => {
 
 
 
+
   const isActive = (path) =>
     location.pathname === path ? "text-orange-600" : "";
  const { user, isAuthenticated, logout } = useAuth();
 
 
- const handleLogout = () => {
+ const handleLogout = async () => {
+  await clearLocalCart(); 
   logout();
   toast.success("Logged out successfully");
   navigate("/login");
@@ -57,7 +73,10 @@ const Header = ({ onCartClick }) => {
 
 
   return (
+    
     <header className="bg-white shadow-md relative z-50">
+      {!isAuthPage && (
+        <>
       {/* Top Bar */}
       <div className="bg-orange-700 text-white py-2 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center text-sm">
@@ -75,18 +94,76 @@ const Header = ({ onCartClick }) => {
             </div>
           </div>
           {/* <p>Hello, {user?.firstName} {user?.lastName}</p> */}
-          {isAuthenticated && (
-   <button
-    className="hover:text-orange-200 flex items-center gap-1"
-    onClick={() => navigate("/profile")}
-  >
-   <div>Hello, {user?.firstName}</div>
-   
-  </button>
-)}
+<div className="relative">
+  {isAuthenticated ? (
+    <>
+      {/* Profile Button */}
+      <button
+        onClick={() => setProfileOpen(!profileOpen)}
+        className="flex items-center gap-2 hover:text-orange-200"
+      >
+        <img
+          src={user?.avatar || "https://ui-avatars.com/api/?name=" + user?.firstName}
+          alt="profile"
+          className="w-8 h-8 rounded-full border"
+        />
+        <span className="font-medium">Hi, {user?.firstName}</span>
+      </button>
+
+      {/* Dropdown */}
+      {profileOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+          <button
+            onClick={() => {
+              navigate("/my-orders");
+              setProfileOpen(false);
+            }}
+            className="w-full text-left px-4 py-2 hover:bg-orange-50"
+          >
+            My Orders
+          </button>
+
+          <button
+            onClick={() => {
+              navigate("/my-profile");
+              setProfileOpen(false);
+            }}
+            className="w-full text-left px-4 py-2 hover:bg-orange-50"
+          >
+            My Profile
+          </button>
+
+          <hr />
+
+          <button
+            onClick={async () => {
+              await clearLocalCart();
+              logout();
+              toast.success("Signed out successfully");
+              navigate("/");
+            }}
+            className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+          >
+            Sign Out
+          </button>
+        </div>
+      )}
+    </>
+  ) : (
+    
+    <button
+      className="hover:text-orange-200 flex items-center gap-1"
+      onClick={() => navigate("/login")}
+    >
+      <User className="h-4 w-4" />
+      Login
+    </button>
+  )}
+</div>
 
 
-     {isAuthenticated ? (
+
+     {/* {isAuthenticated ? (
   <button
     className="hover:text-orange-200 flex items-center gap-1"
     onClick={handleLogout}
@@ -102,12 +179,13 @@ const Header = ({ onCartClick }) => {
     <User className="h-4 w-4" />
     Login
   </button>
-)}
+)} */}
 
         </div>
       </div>
 
-      {/* Main Header */}
+      
+         {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -190,7 +268,7 @@ const Header = ({ onCartClick }) => {
       </div>
 
       {/* Desktop Nav */}
-      <nav className="bg-gray-50 border-t">
+      {/* <nav className="bg-gray-50 border-t">
         <div className="max-w-7xl mx-auto px-4 hidden md:flex space-x-8 py-3">
           <button
             onClick={() => navigate("/")}
@@ -236,8 +314,9 @@ const Header = ({ onCartClick }) => {
             Bulk Orders
           </button>
         </div>
-      </nav>
+      </nav> */}
 
+      
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t shadow-lg px-4 py-3 space-y-2">
@@ -247,6 +326,9 @@ const Header = ({ onCartClick }) => {
           <button onClick={() => navigate("/login")}>Login</button>
         </div>
       )}
+        </>
+      )}
+     
     </header>
   );
 };

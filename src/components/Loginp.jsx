@@ -234,6 +234,11 @@ const Login = () => {
               required
             />
           </div>
+                      <p className="text-sm text-right">
+  <Link to="/forgot-password" className="text-orange-600 hover:underline">
+    Forgot password?
+  </Link>
+</p>
 
           <button
             type="submit"
@@ -251,7 +256,9 @@ const Login = () => {
               Create one
             </Link>
           </p>
+   
         </div>
+
       </div>
     </div>
   );
