@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect}from "react";
 import { User, Mail, Phone } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,7 +6,12 @@ const MyProfilePage = () => {
   const { user } = useAuth();
 
   const avatarUrl = `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=FB923C&color=fff&size=256`;
-
+  useEffect(() => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}, []);
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-md mx-auto">

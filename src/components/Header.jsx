@@ -216,16 +216,16 @@ const Header = ({ onCartClick }) => {
   <div className="absolute z-50 bg-white w-full mt-1 border rounded-lg shadow-lg">
     {suggestions.map((p) => (
       <div
-        key={p.id}
+        key={p._id}
         onClick={() => {
-          navigate(`/products/${p.id}`);
+          navigate(`/products/${p._id}`);
           setSearch("");
           setSuggestions([]);
         }}
         className="flex items-center gap-3 p-3 hover:bg-orange-50 cursor-pointer"
       >
         <img
-          src={p.image}
+          src={p.images?.[0]?.url || "https://via.placeholder.com/50"}
           alt={p.name}
           className="w-12 h-12 object-cover rounded"
         />

@@ -485,7 +485,7 @@ const handlePlaceOrder = async () => {
                 {state.items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
                     <img
-                      src={item.image}
+                      src={item.image?.url || "https://via.placeholder.com/50"}
                       alt={item.name}
                       className="w-12 h-12 object-cover rounded-lg"
                     />

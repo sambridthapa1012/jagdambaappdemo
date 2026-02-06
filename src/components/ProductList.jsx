@@ -24,6 +24,12 @@ const ProductList = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
    const { products, loading } = useProducts();
+     useEffect(() => {
+     window.scrollTo({
+       top: 0,
+       behavior: "smooth",
+     });
+   }, []);
 
   useEffect(() => {
     const categoryParam = searchParams.get("category");

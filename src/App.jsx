@@ -28,6 +28,8 @@ import PasswordResetSuccess from "./components/PasswordResetSuccess";
 import BestDealsProduct from "./components/BestDealsProduct";
 import MyOrdersPage from "./components/MyOrdersPage";
 import MyProfilePage from "./components/MyProfilePage";
+import { Home } from "lucide-react";
+import HomePage from "./components/HomePage";
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -46,11 +48,7 @@ function App() {
               element={
                 
                 <>
-                  <Hero />
-                  <Bestselling />
-                  <FeaturedCategories />
-                  <BestDealsProduct />
-                  <FeaturedProducts />
+                <HomePage />
                 </>
               }
             />

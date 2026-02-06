@@ -56,8 +56,10 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                     key={item.id}
                     className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3"
                   >
+                    
+
                     <img
-                      src={item.image}
+                      src={item.images?.[0]?.url || "https://via.placeholder.com/50"}
                       alt={item.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />

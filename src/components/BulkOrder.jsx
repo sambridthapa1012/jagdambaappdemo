@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -25,6 +25,12 @@ const BulkOrder = () => {
     company: "",
     message: "",
   });
+    useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   /* -------------------- Helpers -------------------- */
 
