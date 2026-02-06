@@ -9,10 +9,11 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import axios from "axios";
 
 const Checkout = () => {
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const { state, dispatch } = useCart();
@@ -23,8 +24,8 @@ const Checkout = () => {
     phone: "",
     email: "",
     address: "",
-    city: "",
     district: "",
+    city: "",
     landmark: "",
   });
 
@@ -40,15 +41,36 @@ const Checkout = () => {
   const deliveryFee = state.total >= 5000 ? 0 : 250;
   const totalAmount = state.total + deliveryFee;
 
-  const handlePlaceOrder = () => {
-    setOrderPlaced(true);
-    // In a real app, this would submit the order to the backend
-    setTimeout(() => {
+const handlePlaceOrder = async () => {
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/orders",
+      {
+        shippingInfo: shippingInfo,
+        paymentMethod,
+        deliveryMethod
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    if (res.data.success) {
+      setOrderPlaced(true);
+
       dispatch({ type: "CLEAR_CART" });
-      setOrderPlaced(false);
-      navigate("/");
-    }, 3000);
-  };
+
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    }
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    alert("Order failed. Please try again.");
+  }
+};
 
   if (orderPlaced) {
     return (
@@ -355,8 +377,8 @@ const Checkout = () => {
                     <input
                       type="radio"
                       name="payment"
-                      value="cod"
-                      checked={paymentMethod === "cod"}
+                      value="cash_on_delivery"
+                      checked={paymentMethod === "cash_on_delivery"}
                       onChange={(e) => setPaymentMethod(e.target.value)}
                       className="mt-1 text-orange-600"
                     />
@@ -463,7 +485,7 @@ const Checkout = () => {
                 {state.items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
                     <img
-                      src={item.image}
+                      src={item.image?.url || "https://via.placeholder.com/50"}
                       alt={item.name}
                       className="w-12 h-12 object-cover rounded-lg"
                     />

@@ -8,8 +8,9 @@ import {
   ShoppingCart,
   SlidersHorizontal,
 } from "lucide-react";
-import { featuredProducts, categories } from "../data/products";
+import { categories } from "../data/products";
 import { useCart } from "../context/CartContext";
+import { useProducts } from "../context/ProductContext";
 
 const ProductList = () => {
   const [viewMode, setViewMode] = useState("grid");
@@ -19,9 +20,16 @@ const ProductList = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState([]);
 
-  const { dispatch } = useCart();
+ const { addItem } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+   const { products, loading } = useProducts();
+     useEffect(() => {
+     window.scrollTo({
+       top: 0,
+       behavior: "smooth",
+     });
+   }, []);
 
   useEffect(() => {
     const categoryParam = searchParams.get("category");
@@ -31,9 +39,9 @@ const ProductList = () => {
   }, [searchParams]);
 
   /* ---------- FILTER LOGIC ---------- */
-  const brands = [...new Set(featuredProducts.map((p) => p.brand))];
+  const brands = [...new Set(products.map((p) => p.brand))];
 
-  let products = featuredProducts.filter((p) => {
+  const filterproducts = products.filter((p) => {
     if (selectedCategory !== "all" && p.category !== selectedCategory)
       return false;
     if (selectedBrands.length && !selectedBrands.includes(p.brand))
@@ -43,7 +51,7 @@ const ProductList = () => {
   });
 
   /* ---------- SORT LOGIC ---------- */
-  products.sort((a, b) => {
+  filterproducts.sort((a, b) => {
     if (sortBy === "price-low") return a.price - b.price;
     if (sortBy === "price-high") return b.price - a.price;
     if (sortBy === "rating") return b.rating - a.rating;
@@ -63,13 +71,13 @@ const ProductList = () => {
     );
   };
 
-  const addToCart = (e, product) => {
-    e.stopPropagation();
-    dispatch({ type: "ADD_ITEM", payload: product });
-  };
+  // const addToCart = (e, product) => {
+  //   e.stopPropagation();
+  //   dispatch({ type: "ADD_ITEM", payload: product });
+  // };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className=" bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between mb-6">
@@ -189,7 +197,7 @@ const ProductList = () => {
 
           {/* PRODUCTS */}
           <div className="flex-1">
-            {products.length === 0 && (
+            {filterproducts.length === 0 && (
               <p className="text-center text-gray-500 mt-10">
                 No products found
               </p>
@@ -197,14 +205,14 @@ const ProductList = () => {
 
             {viewMode === "grid" ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((p) => (
+                {filterproducts.map((p) => (
                   <div
-                    key={p.id}
-                    onClick={() => navigate(`/products/${p.id}`)}
+                    key={p._id}
+                    onClick={() => navigate(`/products/${p._id}`)}
                     className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer"
                   >
                     <img
-                      src={p.image}
+                      src={p.images?.[0]?.url}
                       alt={p.name}
                       className="h-48 w-full object-cover"
                     />
@@ -225,7 +233,7 @@ const ProductList = () => {
                       </div>
                       <p className="font-bold">{formatPrice(p.price)}</p>
                       <button
-                        onClick={(e) => addToCart(e, p)}
+                        onClick={() => addItem(p._id)}
                         className="mt-3 w-full bg-orange-600 text-white py-2 rounded-lg flex justify-center"
                       >
                         <ShoppingCart size={16} className="mr-2" />
@@ -236,10 +244,10 @@ const ProductList = () => {
                 ))}
               </div>
             ) : (
-              products.map((p) => (
+              filterproducts.map((p) => (
                 <div
-                  key={p.id}
-                  onClick={() => navigate(`/products/${p.id}`)}
+                  key={p._id}
+                  onClick={() => navigate(`/products/${p._id}`)}
                   className="bg-white p-4 rounded-lg shadow mb-4 flex justify-between"
                 >
                   <div>

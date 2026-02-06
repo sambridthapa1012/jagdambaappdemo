@@ -1,105 +1,105 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import * as cartApi from "../api/cartApi";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(undefined);
 
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case "ADD_ITEM": {
-      const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
-      );
-
-      if (existingItem) {
-        const updatedItems = state.items.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-
-        return {
-          ...state,
-          items: updatedItems,
-          total: updatedItems.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-          ),
-          itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-        };
-      }
-
-      const newItems = [...state.items, { ...action.payload, quantity: 1 }];
-      return {
-        ...state,
-        items: newItems,
-        total: newItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-        itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
-      };
-    }
-
-    case "REMOVE_ITEM": {
-      const newItems = state.items.filter(
-        (item) => item.id !== action.payload
-      );
-      return {
-        ...state,
-        items: newItems,
-        total: newItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-        itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
-      };
-    }
-
-    case "UPDATE_QUANTITY": {
-      if (action.payload.quantity <= 0) {
-        return cartReducer(state, {
-          type: "REMOVE_ITEM",
-          payload: action.payload.id,
-        });
-      }
-
-      const updatedItems = state.items.map((item) =>
-        item.id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
-          : item
-      );
-
-      return {
-        ...state,
-        items: updatedItems,
-        total: updatedItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-        itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-      };
-    }
-
-    case "CLEAR_CART":
-      return {
-        items: [],
-        total: 0,
-        itemCount: 0,
-      };
-
-    default:
-      return state;
-  }
-};
-
 export const CartProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
+  const { isAuthenticated } = useAuth();
+
+  const [state, setState] = useState({
     items: [],
     total: 0,
     itemCount: 0,
+    loading: true,
   });
 
+  const resetCart = () => {
+    setState({
+      items: [],
+      total: 0,
+      itemCount: 0,
+      loading: false,
+    });
+  };
+
+  const loadCart = async () => {
+    try {
+      const cart = await cartApi.getCart();
+
+      setState({
+        items: cart.items.map(item => ({
+          id: item._id,
+          productId: item.product._id,
+          name: item.product.name,
+          price: item.price,
+          image: item.product.images?.[0],
+          quantity: item.quantity,
+        })),
+        total: cart.total,
+        itemCount: cart.itemCount,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      resetCart();
+    }
+  };
+
+  /* 🔑 RELOAD CART ON LOGIN / CLEAR ON LOGOUT */
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadCart();
+    } else {
+      resetCart();
+    }
+  }, [isAuthenticated]);
+
+  // API actions
+  const addItem = async (productId) => {
+    await cartApi.addToCart(productId, 1);
+    loadCart();
+  };
+
+  const updateQuantity = async (itemId, quantity) => {
+    if (quantity < 1) return removeItem(itemId);
+    await cartApi.updateCartItem(itemId, quantity);
+    loadCart();
+  };
+
+  const removeItem = async (itemId) => {
+    await cartApi.removeCartItem(itemId);
+    loadCart();
+  };
+
+// ❌ removes DB data (use only on checkout)
+const clearServerCart = async () => {
+  await cartApi.clearCart();
+  loadCart();
+};
+
+// ✅ frontend-only reset (use on logout)
+const clearLocalCart = () => {
+  setState({
+    items: [],
+    total: 0,
+    itemCount: 0,
+    loading: false,
+  });
+};
+
+
   return (
-    <CartContext.Provider value={{ state, dispatch }}>
+    <CartContext.Provider
+      value={{
+        state,
+        addItem,
+        updateQuantity,
+        removeItem,
+        clearServerCart,
+        clearLocalCart
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -107,9 +107,8 @@ export const CartProvider = ({ children }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+  if (!context) {
+    throw new Error("useCart must be used within CartProvider");
   }
   return context;
 };
-

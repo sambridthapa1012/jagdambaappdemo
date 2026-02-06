@@ -11,7 +11,7 @@ import {
   Shield,
   Phone,
 } from "lucide-react";
-import { featuredProducts } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 import { useCart } from "../context/CartContext";
 
 
@@ -20,6 +20,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+   const { products, loading } = useProducts();
   useEffect(() => {
   window.scrollTo({
     top: 0,
@@ -27,11 +28,20 @@ const ProductDetail = () => {
   });
 }, []);
 
-  const { dispatch } = useCart();
+ 
   const { id } = useParams();
+  const { addItem } = useCart();
   const navigate = useNavigate();
+  if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-lg font-semibold">Loading product...</p>
+    </div>
+  );
+}
 
-  const product = featuredProducts.find((p) => p.id === id);
+  const product = products.find((p) => p._id === id);
+
 
   if (!product) {
     return (
@@ -51,11 +61,11 @@ const ProductDetail = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: product });
-    }
-  };
+  // const handleAddToCart = () => {
+  //   for (let i = 0; i < quantity; i++) {
+  //     dispatch({ type: "ADD_ITEM", payload: product });
+  //   }
+  // };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-NP", {
@@ -87,15 +97,15 @@ const ProductDetail = () => {
           <div>
             <div className="mb-4">
               <img
-                src={product.images[selectedImage] || product.image}
+                src={product.images?.[selectedImage]?.url || product.image?.url}
                 alt={product.name}
                 className="w-full h-96 object-cover rounded-lg shadow-md"
               />
             </div>
 
-            {product.images.length > 1 && (
+            {product.images?.length > 1 && (
               <div className="flex space-x-2 overflow-x-auto">
-                {product.images.map((image, index) => (
+                {product.images?.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -106,7 +116,7 @@ const ProductDetail = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={image?.url}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -222,14 +232,16 @@ const ProductDetail = () => {
             {/* Add to Cart */}
             <div className="mb-6">
               <button
-                onClick={handleAddToCart}
+                onClick={() => addItem(product._id)}
                 className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition duration-300 flex items-center justify-center font-semibold text-lg mb-4"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add to Cart - {formatPrice(product.price * quantity)}
               </button>
 
-              <button className="w-full bg-gray-800 text-white py-3 px-6 rounded-lg hover:bg-gray-900 transition duration-300 font-semibold">
+              <button onClick={()=>{addItem(product._id)
+                navigate('/checkout')
+              }} className="w-full bg-gray-800 text-white py-3 px-6 rounded-lg hover:bg-gray-900 transition duration-300 font-semibold">
                 Buy Now
               </button>
             </div>

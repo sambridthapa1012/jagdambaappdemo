@@ -7,8 +7,9 @@ const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
-    lastname: '',
+    lastName: '',
     email: '',
+    PhoneNumber:'',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ const Signup = () => {
     setLoading(true);
 
     // Basic validation
-    if (!formData.firstName || !formData.lastname || !formData.email || !formData.password) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
       setError('All fields are required');
       setLoading(false);
       return;
@@ -54,7 +55,7 @@ const Signup = () => {
 
     try {
       const { data } = await axios.post(
-        'http://localhost:8000/api/v1/user/register',
+        'http://localhost:5000/api/auth/register',
         formData,
         {
           headers: {
@@ -68,8 +69,9 @@ const Signup = () => {
         // Reset form
         setFormData({
           firstName: '',
-          lastname: '',
+          lastName: '',
           email: '',
+          PhoneNumber:'',
           password: ''
         });
         // Redirect to login after 3 seconds
@@ -144,12 +146,26 @@ const Signup = () => {
             <label className="text-gray-600 text-sm">Last Name</label>
             <input
               type="text"
-              name="lastname"
-              value={formData.lastname}
+              name="lastName"
+              value={formData.lastName}
               onChange={handleChange}
               className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg 
              focus:ring-2 focus:ring-orange-500 focus:outline-none"
               placeholder="Doe"
+              required
+            />
+          </div>
+          {/* Phone Number */}
+          <div>
+            <label className="text-gray-600 text-sm">Phone Number</label>
+            <input
+              type="text"
+              name="PhoneNumber"
+              value={formData.PhoneNumber}
+              onChange={handleChange}
+              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg 
+             focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              placeholder="+977 9812345678"
               required
             />
           </div>

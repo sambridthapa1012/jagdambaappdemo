@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -9,10 +9,15 @@ import {
   Phone,
   Users,
 } from "lucide-react";
-import { featuredProducts } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 
 const BulkOrder = () => {
+  const navigate = useNavigate();
+  const { products = [], loading } = useProducts();
+
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
+
   const [customerInfo, setCustomerInfo] = useState({
     customerName: "",
     phone: "",
@@ -20,84 +25,110 @@ const BulkOrder = () => {
     company: "",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
-  const navigate = useNavigate();
+    useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
+  /* -------------------- Helpers -------------------- */
 
   const addProduct = () => {
-    setSelectedProducts([
-      ...selectedProducts,
+    setSelectedProducts((prev) => [
+      ...prev,
       { productId: "", quantity: 1 },
     ]);
   };
 
   const updateProduct = (index, field, value) => {
-    const updated = [...selectedProducts];
-    updated[index] = { ...updated[index], [field]: value };
-    setSelectedProducts(updated);
+    setSelectedProducts((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      )
+    );
   };
 
   const removeProduct = (index) => {
-    setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
+    setSelectedProducts((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const bulkRequest = {
-      customerName: customerInfo.customerName,
-      phone: customerInfo.phone,
-      email: customerInfo.email,
-      company: customerInfo.company,
-      products: selectedProducts.filter((p) => p.productId),
-      message: customerInfo.message,
-    };
-
-    console.log("Bulk request submitted:", bulkRequest);
-    setSubmitted(true);
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setSubmitted(false);
-      setSelectedProducts([]);
-      setCustomerInfo({
-        customerName: "",
-        phone: "",
-        email: "",
-        company: "",
-        message: "",
-      });
-    }, 3000);
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("en-NP", {
+  const formatPrice = (price = 0) =>
+    new Intl.NumberFormat("en-NP", {
       style: "currency",
       currency: "NPR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
-  };
 
-  const getEstimatedTotal = () => {
-    return selectedProducts.reduce((total, item) => {
-      const product = featuredProducts.find((p) => p.id === item.productId);
+  const getEstimatedTotal = () =>
+    selectedProducts.reduce((total, item) => {
+      const product = products.find((p) => p._id === item.productId);
       return total + (product ? product.price * item.quantity : 0);
     }, 0);
+
+  /* -------------------- Submit -------------------- */
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      customerName: customerInfo.customerName,
+      phone: customerInfo.phone,
+      email: customerInfo.email,
+      company: customerInfo.company,
+      message: customerInfo.message,
+      products: selectedProducts.filter((p) => p.productId),
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/api/bulk-orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Submission failed");
+
+      setSubmitted(true);
+
+      setTimeout(() => {
+        setSubmitted(false);
+        setSelectedProducts([]);
+        setCustomerInfo({
+          customerName: "",
+          phone: "",
+          email: "",
+          company: "",
+          message: "",
+        });
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit bulk order. Please try again.");
+    }
   };
+
+  /* -------------------- UI States -------------------- */
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Loading products...</p>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center max-w-md">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">
           <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Send className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Request Submitted!
-          </h2>
+          <h2 className="text-2xl font-bold mb-2">Request Submitted!</h2>
           <p className="text-gray-600 mb-4">
-            We've received your bulk order request. Our team will contact you
-            within 24 hours with a custom quote.
+            Our team will contact you within 24 hours.
           </p>
           <p className="text-sm text-gray-500">
             Reference ID: #BULK{Date.now()}
@@ -107,308 +138,174 @@ const BulkOrder = () => {
     );
   }
 
+  /* -------------------- Main UI -------------------- */
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 py-4">
+      <div className="bg-white border-b py-4">
         <div className="max-w-4xl mx-auto px-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-orange-600 transition-colors mb-4"
+            className="flex items-center text-gray-600 hover:text-orange-600 mb-4"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Home
+            Back
           </button>
 
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              Bulk Order Request
-            </h1>
-            <p className="text-gray-600">
-              Get special pricing for large quantity orders
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              ठूलो मात्रामा अर्डरका लागि विशेष छुट
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-center">
+            Bulk Order Request
+          </h1>
+          <p className="text-center text-gray-500">
+            Special pricing for large quantity orders
+          </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Benefits Section */}
-        <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-lg p-6 mb-8 text-white">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <Users className="h-8 w-8 mx-auto mb-2" />
-              <h3 className="font-semibold mb-1">Contractor Friendly</h3>
-              <p className="text-sm opacity-90">
-                Special rates for contractors and builders
-              </p>
-            </div>
-            <div className="text-center">
-              <FileText className="h-8 w-8 mx-auto mb-2" />
-              <h3 className="font-semibold mb-1">Custom Quotes</h3>
-              <p className="text-sm opacity-90">
-                Tailored pricing based on quantity
-              </p>
-            </div>
-            <div className="text-center">
-              <Phone className="h-8 w-8 mx-auto mb-2" />
-              <h3 className="font-semibold mb-1">Dedicated Support</h3>
-              <p className="text-sm opacity-90">
-                Personal account manager assistance
-              </p>
-            </div>
-          </div>
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-4xl mx-auto px-4 py-8 space-y-8"
+      >
+        {/* Contact Info */}
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Customer Information */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">
-              Contact Information
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={customerInfo.customerName}
-                  onChange={(e) =>
-                    setCustomerInfo({
-                      ...customerInfo,
-                      customerName: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={customerInfo.phone}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, phone: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="98xxxxxxxx"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, email: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="your@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company/Organization
-                </label>
-                <input
-                  type="text"
-                  value={customerInfo.company}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, company: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Your company name"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Product Selection */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Product Requirements
-              </h2>
-              <button
-                type="button"
-                onClick={addProduct}
-                className="flex items-center bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition duration-300"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Product
-              </button>
-            </div>
-
-            {selectedProducts.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <p>
-                  No products selected yet. Click "Add Product" to get started.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {selectedProducts.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <select
-                        value={item.productId}
-                        onChange={(e) =>
-                          updateProduct(index, "productId", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      >
-                        <option value="">Select a product</option>
-                        {featuredProducts.map((product) => (
-                          <option key={product.id} value={product.id}>
-                            {product.name} - {formatPrice(product.price)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="flex items-center">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateProduct(
-                            index,
-                            "quantity",
-                            Math.max(1, item.quantity - 1)
-                          )
-                        }
-                        className="p-1 text-gray-500 hover:text-gray-700"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateProduct(
-                            index,
-                            "quantity",
-                            parseInt(e.target.value) || 1
-                          )
-                        }
-                        className="w-20 mx-2 px-2 py-1 border border-gray-300 rounded text-center"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateProduct(index, "quantity", item.quantity + 1)
-                        }
-                        className="p-1 text-gray-500 hover:text-gray-700"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div className="text-right min-w-0">
-                      {item.productId && (
-                        <p className="text-sm font-semibold text-orange-600">
-                          {formatPrice(
-                            (featuredProducts.find((p) => p.id === item.productId)
-                              ?.price || 0) * item.quantity
-                          )}
-                        </p>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => removeProduct(index)}
-                      className="text-red-500 hover:text-red-700 p-1"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {selectedProducts.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-800">
-                    Estimated Total:
-                  </span>
-                  <span className="text-2xl font-bold text-orange-600">
-                    {formatPrice(getEstimatedTotal())}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  *Final pricing may vary based on quantity discounts and
-                  current market rates
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Additional Requirements */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">
-              Additional Requirements
-            </h2>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Project Details & Special Requirements
-              </label>
-              <textarea
-                value={customerInfo.message}
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              ["customerName", "Full Name *"],
+              ["phone", "Phone Number *"],
+              ["email", "Email"],
+              ["company", "Company"],
+            ].map(([key, label]) => (
+              <input
+                key={key}
+                required={label.includes("*")}
+                placeholder={label}
+                value={customerInfo[key]}
                 onChange={(e) =>
-                  setCustomerInfo({ ...customerInfo, message: e.target.value })
+                  setCustomerInfo({ ...customerInfo, [key]: e.target.value })
                 }
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="Please describe your project, timeline, delivery requirements, and any special considerations..."
+                className="border px-3 py-2 rounded-lg"
               />
-            </div>
+            ))}
           </div>
+        </div>
 
-          {/* Submit Button */}
-          <div className="text-center">
+        {/* Products */}
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="flex justify-between mb-4">
+            <h2 className="text-xl font-semibold">Products</h2>
             <button
-              type="submit"
-              disabled={
-                !customerInfo.customerName ||
-                !customerInfo.phone ||
-                selectedProducts.length === 0
-              }
-              className="bg-orange-600 text-white px-8 py-3 rounded-lg hover:bg-orange-700 transition duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              onClick={addProduct}
+              className="bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center"
             >
-              <Send className="h-5 w-5 inline mr-2" />
-              Submit Bulk Order Request
+              <Plus className="h-4 w-4 mr-2" /> Add Product
             </button>
-
-            <p className="text-sm text-gray-500 mt-4">
-              Our team will review your request and provide a detailed quote
-              within 24 hours
-            </p>
           </div>
-        </form>
-      </div>
+
+          {selectedProducts.map((item, index) => {
+            const product = products.find(
+              (p) => p._id === item.productId
+            );
+
+            return (
+              <div
+                key={index}
+                className="flex gap-4 items-center mb-4 border p-4 rounded-lg"
+              >
+                <select
+                  value={item.productId}
+                  onChange={(e) =>
+                    updateProduct(index, "productId", e.target.value)
+                  }
+                  className="flex-1 border px-3 py-2 rounded"
+                >
+                  <option value="">Select product</option>
+                  {products.map((p) => (
+                    <option key={p._id} value={p._id}>
+                      {p.name} — {formatPrice(p.price)}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateProduct(index, "quantity", Math.max(1, item.quantity - 1))
+                    }
+                  >
+                    <Minus />
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateProduct(index, "quantity", Number(e.target.value) || 1)
+                    }
+                    className="w-16 mx-2 text-center border rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateProduct(index, "quantity", item.quantity + 1)
+                    }
+                  >
+                    <Plus />
+                  </button>
+                </div>
+
+                <span className="text-orange-600 font-semibold">
+                  {formatPrice((product?.price || 0) * item.quantity)}
+                </span>
+
+                <button onClick={() => removeProduct(index)}>
+                  <Minus className="text-red-500" />
+                </button>
+              </div>
+            );
+          })}
+
+          {selectedProducts.length > 0 && (
+            <div className="text-right font-bold text-xl mt-4">
+              Estimated Total: {formatPrice(getEstimatedTotal())}
+            </div>
+          )}
+        </div>
+
+        {/* Message */}
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <textarea
+            rows="4"
+            value={customerInfo.message}
+            onChange={(e) =>
+              setCustomerInfo({ ...customerInfo, message: e.target.value })
+            }
+            placeholder="Additional requirements..."
+            className="w-full border px-3 py-2 rounded-lg"
+          />
+        </div>
+
+        {/* Submit */}
+        <div className="text-center">
+          <button
+            type="submit"
+            disabled={
+              !customerInfo.customerName ||
+              !customerInfo.phone ||
+              selectedProducts.length === 0
+            }
+            className="bg-orange-600 text-white px-8 py-3 rounded-lg disabled:opacity-50"
+          >
+            <Send className="inline mr-2" />
+            Submit Bulk Order
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
 
 export default BulkOrder;
-
