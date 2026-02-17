@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getBestDealProduct } from "../api/BestdealsProductAPI";
+import { getBestDealProduct } from "../api/bestdealsProductAPi.js";
 
 function BestDealsProduct() {
   const [products, setProducts] = useState([]);
