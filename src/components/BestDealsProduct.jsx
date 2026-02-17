@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getBestDealProduct} from "../api/bestDealsProductApi"
-";
+import { getBestDealProduct} from "../api/bestDealsProductApi"; 
 
 
 function BestDealsProduct() {
