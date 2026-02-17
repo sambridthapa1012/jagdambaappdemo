@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getBestDealProduct } from "../api/bestdealsProductAPi.js";
+import { getBestDealProduct} from "../api/bestDealsProductApi"; 
+
 
 function BestDealsProduct() {
   const [products, setProducts] = useState([]);
@@ -16,7 +17,7 @@ function BestDealsProduct() {
         const data = await getBestDealProduct();
         setProducts(data);
       } catch (error) {
-        console.error("Failed to load best selling products", error);
+        console.error("Failed to load best deals products", error);
       }
     };
     fetchProducts();
@@ -95,3 +96,20 @@ function BestDealsProduct() {
 
 export default BestDealsProduct;
 
+// import axios from "axios";
+
+// const API = axios.create({
+
+//   baseURL: "https://jagdamba-website-backend.vercel.app",
+// //  baseURL: "http://localhost:5000/api",
+// });
+
+// export const getBestDealProducts = async () => {
+//   const res = await API.get("/products", {
+//     params: {
+//       bestdeals: true,
+//       limit: 10,
+//     },
+//   });
+//   return res.data.data.products;
+// };

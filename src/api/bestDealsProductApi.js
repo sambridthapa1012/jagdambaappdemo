@@ -1,13 +1,15 @@
 import axios from "axios";
 
 const API = axios.create({
+
   baseURL: "https://jagdamba-website-backend.vercel.app/api",
+//  baseURL: "http://localhost:5000/api",
 });
 
-export const getBestSellingProducts = async () => {
+export const getBestDealProduct = async () => {
   const res = await API.get("/products", {
     params: {
-      featured: true,
+      bestdeals: true,
       limit: 10,
     },
   });
