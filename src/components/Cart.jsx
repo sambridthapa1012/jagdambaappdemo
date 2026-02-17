@@ -59,7 +59,7 @@ const Cart = ({ isOpen, onClose, onCheckout }) => {
                     
 
                     <img
-                      src={item.images?.[0]?.url || "https://via.placeholder.com/50"}
+                      src={item.image || "https://via.placeholder.com/50"}
                       alt={item.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />

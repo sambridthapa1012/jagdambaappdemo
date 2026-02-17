@@ -1,59 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { categories } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 
 const FeaturedCategories = () => {
   const navigate = useNavigate();
+  const { categories, loading } = useProducts();
+  const [openCategory, setOpenCategory] = useState(null);
 
-  const handleCategoryClick = (categoryId) => {
-    navigate(`/products?category=${categoryId}`);
-  };
+  if (loading) return <p className="text-center py-10">Loading...</p>;
+
+  const handleCategoryClick = (id) => navigate(`/products?category=${id}`);
+  const handleSubcategoryClick = (id, subName) =>
+    navigate(`/products?category=${id}&subcategory=${encodeURIComponent(subName)}`);
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Shop by Category
-          </h2>
-          <p className="text-gray-600">
-            Find everything you need for your construction project
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            श्रेणी अनुसार किनमेल गर्नुहोस्
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-4 gap-6">
           {categories.map((category) => (
-            <div
-              key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
-              className="group cursor-pointer"
-            >
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="aspect-w-1 aspect-h-1 h-32 overflow-hidden">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+            <div key={category._id} className="bg-white rounded-lg shadow hover:shadow-lg">
+              <div className="relative cursor-pointer">
+                <img src={category.image?.url} alt={category.name} onClick={() => handleCategoryClick(category._id)} className="h-40 w-full object-cover rounded-t-lg" />
                 <div className="p-4 text-center">
-                  <div className="text-2xl mb-2">{category.icon}</div>
-                  <h3 className="font-semibold text-gray-800 group-hover:text-orange-600 transition-colors">
-                    {category.name}
-                  </h3>
-                  {category.nameNepali && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {category.nameNepali}
-                    </p>
+                  <div className="text-3xl">{category.icon}</div>
+                  <h3 onClick={() => handleCategoryClick(category._id)} className="font-semibold hover:text-orange-600">{category.name}</h3>
+
+                  {category.subcategories?.length > 0 && (
+                    <button onClick={() => setOpenCategory(openCategory === category._id ? null : category._id)} className="text-sm text-gray-500 mt-2">
+                      {openCategory === category._id ? "Hide Subcategories" : "View Subcategories"}
+                    </button>
                   )}
-                  <p className="text-sm text-gray-600 mt-2">
-                    {category.subcategories.length} items
-                  </p>
                 </div>
               </div>
+
+              {openCategory === category._id && category.subcategories?.length > 0 && (
+                <div className="border-t bg-gray-50">
+                  {category.subcategories.map((sub, index) => (
+  <button
+    key={index}
+    onClick={() => handleSubcategoryClick(category._id, sub)}
+  >
+    {sub}
+  </button>
+                  ))  }
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -63,4 +54,3 @@ const FeaturedCategories = () => {
 };
 
 export default FeaturedCategories;
-
