@@ -33,7 +33,7 @@ export const CartProvider = ({ children }) => {
           productId: item.product._id,
           name: item.product.name,
           price: item.price,
-          image: item.product.images?.[0],
+          image: item.product.images?.[0]?.url || "https://via.placeholder.com/50",
           quantity: item.quantity,
         })),
         total: cart.total,
