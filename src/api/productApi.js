@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://jagadamba-backend.vercel.app/api",
+  baseURL: "https://jagadamba-backend-cdzs.vercel.app/api",
 });
 
 export const fetchProducts = async (params = {}) => {

@@ -55,7 +55,7 @@ const Signup = () => {
 
     try {
       const { data } = await axios.post(
-        'https://jagdamba-website-backend.vercel.app/api/auth/register',
+        'https://jagadamba-backend-cdzs.vercel.app/api/auth/register',
         formData,
         {
           headers: {

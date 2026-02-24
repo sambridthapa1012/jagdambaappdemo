@@ -37,7 +37,7 @@ const ResetPassword = () => {
 
     try {
       const res = await fetch(
-        `https://jagdamba-website-backend.vercel.app/api/auth/reset-password/${token}`,
+        `https://jagadamba-backend-cdzs.vercel.app/api/auth/reset-password/${token}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

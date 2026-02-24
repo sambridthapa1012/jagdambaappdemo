@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 // Axios instance
 const API = axios.create({
-  baseURL: "https://jagdamba-website-backend.vercel.app/api",
+  baseURL: "https://jagadamba-backend-cdzs.vercel.app/api",
 });
 
 // Attach token automatically
