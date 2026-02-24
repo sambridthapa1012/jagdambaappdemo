@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     try{
-        const res= await fetch(`https://jagdamba-website-backend.vercel.app/api/auth/forgot-password`, {
+        const res= await fetch(`https://jagadamba-backend-cdzs.vercel.app/api/auth/forgot-password`, {
         
       method: "POST",
       headers: { "Content-Type": "application/json" },

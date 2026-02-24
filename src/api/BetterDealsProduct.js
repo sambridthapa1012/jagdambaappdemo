@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
 
-  baseURL: "https://jagadamba-backend.vercel.app/api",
+  baseURL: "https://jagadamba-backend-cdzs.vercel.app/api",
 //  baseURL: "http://localhost:5000/api",
 });
 

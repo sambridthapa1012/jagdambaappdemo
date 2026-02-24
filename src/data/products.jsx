@@ -654,7 +654,7 @@ const Products = () => {
           className="border rounded-lg p-4 hover:shadow cursor-pointer"
         >
           <img
-            src={`https://jagdamba-website-backend.vercel.app/${product.images?.[0]}`}
+            src={`https://jagadamba-backend-cdzs.vercel.app/${product.images?.[0]}`}
             alt={product.name}
             className="h-40 w-full object-cover"
           />

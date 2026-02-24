@@ -12,7 +12,7 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders", {
+        const res = await axios.get("https://jagadamba-backend-cdzs.vercel.app/api/orders", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

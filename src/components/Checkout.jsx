@@ -44,7 +44,7 @@ const Checkout = () => {
 const handlePlaceOrder = async () => {
   try {
     const res = await axios.post(
-      "http://localhost:5000/api/orders",
+      "https://jagadamba-backend-cdzs.vercel.app/api/orders",
       {
         shippingInfo: shippingInfo,
         paymentMethod,

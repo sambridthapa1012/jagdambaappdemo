@@ -82,7 +82,7 @@ const BulkOrder = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/bulk-orders", {
+      const res = await fetch("https://jagadamba-backend-cdzs.vercel.app/api/api/bulk-orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
