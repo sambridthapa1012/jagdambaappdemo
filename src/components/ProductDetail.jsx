@@ -226,6 +226,10 @@ const ProductDetail = () => {
               </div>
               <p className="text-sm text-gray-600 mt-1">
                 {product.stockQuantity} items available
+
+              </p>
+               <p className="text-sm text-gray-600 mt-1">
+                for more price updates contact us at 01-515825
               </p>
             </div>
 

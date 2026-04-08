@@ -30,6 +30,8 @@ import MyOrdersPage from "./components/MyOrdersPage";
 import MyProfilePage from "./components/MyProfilePage";
 import { Home } from "lucide-react";
 import HomePage from "./components/HomePage";
+import Blog from "./components/Blog";
+import BlogDetail from "./components/BlogDetail";
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -58,6 +60,8 @@ function App() {
 
             {/* PRODUCT DETAIL */}
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
+            <Route path="/blog" element={<Blog />} />
 
             {/* AUTH */}
             <Route path="/login" element={<Login />} />
@@ -88,8 +92,8 @@ function App() {
             setIsCartOpen(false);
           }}
         />
-
-        <ChatbotWidget />
+{/* 
+        <ChatbotWidget /> */}
         <WhatsAppButton />
       </div>
     </CartProvider>

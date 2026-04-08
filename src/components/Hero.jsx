@@ -75,9 +75,9 @@ useEffect(() => {
       <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white py-3">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-lg font-semibold">
-            🎉 Festival Season Mega Sale! Up to 25% OFF on all construction
+            🎉 New Year Season Mega Sale! Up to 25% OFF on all construction
             materials
-            <span className="ml-4 text-yellow-200">Use code: TIHAR2024</span>
+            <span className="ml-4 text-yellow-200">Use code: JGH2026</span>
           </p>
         </div>
       </div>

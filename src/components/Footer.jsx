@@ -90,6 +90,11 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <a href="/blog" className="hover:text-orange-400 transition-colors">
+                  Blog
+                </a>
+              </li>
+              <li>
                 <a href="#" className="hover:text-orange-400 transition-colors">
                   Products
                 </a>
@@ -158,20 +163,34 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Contact Us</h3>
             <div className="space-y-3 text-sm">
-             <div className="flex items-start">
-  <MapPin className="h-4 w-4 text-orange-400 mr-2 mt-1 flex-shrink-0" />
-  <a
-    href="https://maps.app.goo.gl/kSX6nS5tJpBzz6vGA"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="hover:text-orange-400 transition-colors"
-  >
-    Dhapakhel, Lalitpur
-    <br />
-    Chapagaun Dobato, Lalitpur
-    <br />
-    Nepal
-  </a>
+           <div className="space-y-3 text-sm">
+
+  {/* Location 1 */}
+  <div className="flex items-start">
+    <MapPin className="h-4 w-4 text-orange-400 mr-2 mt-1 flex-shrink-0" />
+    <a
+      href="https://maps.app.goo.gl/kSX6nS5tJpBzz6vGA"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:text-orange-400 transition-colors"
+    >
+      Dhapakhel, Lalitpur
+    </a>
+  </div>
+
+  {/* Location 2 */}
+  <div className="flex items-start">
+    <MapPin className="h-4 w-4 text-orange-400 mr-2 mt-1 flex-shrink-0" />
+    <a
+      href="https://maps.app.goo.gl/kSX6nS5tJpBzz6vGA" // 👉 change if different location link
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:text-orange-400 transition-colors"
+    >
+      Chapagaun Dobato, Lalitpur
+    </a>
+  </div>
+
 </div>
 
           <div className="flex items-center">
